@@ -36,7 +36,6 @@ namespace Task4.Controllers
             {
                 User user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
                 DateTime logTime = DateTime.Now;
-
                 if (user == null)
                 {
                     ModelState.AddModelError("", "Некорректные логин и(или) пароль");
@@ -69,6 +68,7 @@ namespace Task4.Controllers
             {
                 string mailPattern = @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
                                     @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9]{2,17}))$";
+
                 User user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
                 if (user == null && !Regex.IsMatch(model.Email, mailPattern, RegexOptions.IgnoreCase))
                 {
@@ -103,58 +103,46 @@ namespace Task4.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Delete(Dictionary<string, bool> check)
-        {            
-            foreach (var item in check)
-            {
-                try
-                {
-                    User user = await db.Users.FirstOrDefaultAsync(u => u.Email == item.Key);
-                    db.Users.Remove(user);
-                    db.SaveChanges();
-                }
-                catch (NullReferenceException )
-                {                    
-                }                
-            }
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Block(Dictionary<string, bool> check)
+        public async Task action(string typeOfAction, Dictionary<string, bool> check)
         {
             foreach (var item in check)
             {
                 try
                 {
                     User user = await db.Users.FirstOrDefaultAsync(u => u.Email == item.Key);
-                    user.IsBlocked = true;
-                    db.SaveChanges();
+                    if (typeOfAction == "Delete"){
+                        db.Users.Remove(user);
+                    }else if (typeOfAction == "Block"){
+                        user.IsBlocked = true;
+                    }else if (typeOfAction == "Unblock"){
+                        user.IsBlocked = false;
+                    }
+                    await db.SaveChangesAsync();
                 }
-                catch (NullReferenceException)
-                {                    
-                }                
-            }
+                catch
+                {
+                }
+            }                                 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Dictionary<string, bool> check)
+        {
+            await action("Delete", check);
             return RedirectToAction("Index", "Home");
- 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Block(Dictionary<string, bool> check)
+        {
+            await action("Block", check);
+            return RedirectToAction("Index", "Home"); 
         }
 
         [HttpPost]
         public async Task<IActionResult> Unblock(Dictionary<string, bool> check)
-        {           
-            foreach (var item in check)
-            {
-                try
-                {
-                    User user = await db.Users.FirstOrDefaultAsync(u => u.Email == item.Key);
-                    user.IsBlocked = false;
-                    db.SaveChanges();
-                }
-                catch (NullReferenceException)
-                {
-                }                
-            }            
+        {
+            await action("Unblock", check);
             return RedirectToAction("Index", "Home");               
         }
 

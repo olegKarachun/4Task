@@ -3,13 +3,14 @@
 }
 <form id="check" method="post">
     <table class="table">
-        <tr><td><label><input class="check" name="checkall" type="checkbox" onclick="checkedAll(check)">Check/Uncheck All</label></td><td>ID</td><td>Name</td><td>Email</td><td>Reg Date</td><td>Last Log Date</td><td>Status</td></tr>
+        <tr><th scope="col"><label><input class="check" name="checkall" type="checkbox" onclick="checkedAll(check)">Check All</label></th>
+        <th scope="col">ID</th><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Reg Date</th><th scope="col">Last Log Date</th><th scope="col">Status</th></tr>
 
         @foreach (var item in ViewBag.Users)
         {
             <tr>
                 <td><input id="checkbox" class="check" name="check[@item.Email]" type="checkbox"></td>
-                <td>@item.Id</td>
+                <th>@item.Id</th>
                 <td>@item.Name</td>
                 <td>@item.Email</td>
                 <td>@item.AuthDate</td>
