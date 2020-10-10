@@ -38,7 +38,7 @@ namespace Task4.Controllers
                 DateTime logTime = DateTime.Now;
                 if (user == null)
                 {
-                    ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                    ModelState.AddModelError("", "Incorrect name or(and) email");
                 }
                 else if (user != null && !user.IsBlocked)
                 {
@@ -49,7 +49,7 @@ namespace Task4.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Вы заблокированы");
+                    ModelState.AddModelError("", "You are blocked");
                 }             
             }            
             return View(model);                       
@@ -72,11 +72,11 @@ namespace Task4.Controllers
                 User user = await db.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
                 if (user == null && !Regex.IsMatch(model.Email, mailPattern, RegexOptions.IgnoreCase))
                 {
-                    ModelState.AddModelError("", "Введите корректный Email");
+                    ModelState.AddModelError("", "Enter correct Email");
                 }
                 else if (user == null && model.Name == model.Password)
                 {
-                    ModelState.AddModelError("", "Имя и пароль не должны совпадать");
+                    ModelState.AddModelError("", "Name and password must not match");
                 }
                 else if(user == null && model.Name != model.Password)
                 {                    
@@ -87,7 +87,7 @@ namespace Task4.Controllers
                     return RedirectToAction("Index", "Home");
                 }
                 else
-                    ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                    ModelState.AddModelError("", "Incorrect name or(and) email");
             }
             return View(model);
         }

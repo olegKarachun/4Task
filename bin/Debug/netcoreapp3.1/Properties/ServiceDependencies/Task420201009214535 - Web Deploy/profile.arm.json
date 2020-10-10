@@ -21,7 +21,7 @@
     },
     "resourceName": {
       "type": "string",
-      "defaultValue": "Task420201008213502",
+      "defaultValue": "Task420201009214535",
       "metadata": {
         "description": "Name of the main resource to be created by this template."
       }
